@@ -37,6 +37,8 @@ module processor(
     const logic[4:0] MOVREG_TAP_ADDR_BACK = 5'b00010; // move value in r9 to r2
     const logic[4:0] MOVREG_BACKSEED = 5'b00011; // move value in r8 to r5
 
+  // BRANCH 
+  const logic[4:0] BRANCH_PADDING = 5'b00000; // compare the value in r4 with the value 0 
 
 
 
@@ -160,6 +162,15 @@ module processor(
             end
             BRANCH: begin
             case(instr[4:0]):
+              BRANCH_PADDING: begin
+                if(regs[4] == 0) begin
+                  PC <= PC + 1;
+                end
+                else begin
+                  PC <= 
+                end
+                
+              end
 
 
             endcase
