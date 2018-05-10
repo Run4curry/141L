@@ -29,6 +29,7 @@ module processor(
     const logic[4:0] MOV_41 = 5'b00000; // moving 41 into r0
     const logic[4:0] MOV_ENC64 = 5'b00001; // moving 64 into r1
     const logic[4:0] MOV_SPACE2 = 5'b00010; // move space char into r2
+  const logic[4:0] MOV_ZERO = 5'b00011; // move 0 into r0
 
     // MOVREG constants for encrypt could cross over
     const logic[4:0] MOVREG_TAP_ADDR = 5'b00000; // move value in r2 into r9
