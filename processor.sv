@@ -1,6 +1,6 @@
 module processor(
   input clk,
-  input reset,
+  input init,
   output logic done
   );
     logic[8:0] imem[512]; //instruction memory
@@ -10,7 +10,7 @@ module processor(
     logic[8:0] instr; // the actual instruction
 
     // enum/constant declarations
-    enum logic[1:0] {IDLE=2'b00, COMPUTE:2'b01, DUMMY:2'b10} state;
+    enum logic[1:0] {IDLE=2'b00, COMPUTE=2'b01, DUMMY=2'b10} state;
     const logic[3:0] LW = 4'b0000; // load word check
     const logic[3:0] SW = 4'b0001; // store word check
     const logic[3:0] MOV = 4'b0010; // Move instruction
@@ -21,9 +21,9 @@ module processor(
     const logic[3:0] BRANCH = 4'b0111; // Branch instruction
     const logic[3:0] PAR = 4'b1001; // parity instruction check
     const logic[3:0] INC = 4'b1000; // increment instruction check
-    const logic[3:0] DEC = 4'b1010 // decrement instruction check
-    const logic[3:0] STOP = 4'b1011 // Stop instruction
-    const logic[3:0] MOVREG = 4'b1100 // move register to register instruction
+    const logic[3:0] DEC = 4'b1010; // decrement instruction check
+    const logic[3:0] STOP = 4'b1011; // Stop instruction
+    const logic[3:0] MOVREG = 4'b1100; // move register to register instruction
 
     //MOV constants for encrypt
     const logic[4:0] MOV_41 = 5'b00000; // moving 41 into r0
@@ -37,8 +37,11 @@ module processor(
     const logic[4:0] MOVREG_TAP_ADDR_BACK = 5'b00010; // move value in r9 to r2
     const logic[4:0] MOVREG_BACKSEED = 5'b00011; // move value in r8 to r5
 
-  // BRANCH 
-  const logic[4:0] BRANCH_PADDING = 5'b00000; // compare the value in r4 with the value 0 
+  // BRANCH
+  const logic[4:0] BRANCH_PADDING = 5'b00000; // compare the value in r4 with the value 0
+  const logic[4:0] BRANCH_MESSAGE = 5'b00001; // compare the value in r0 to 41
+  const logic[4:0] BRANCH_END = 5'b00010; // compare the value in r1 to 128
+  const logic[4:0] BRANCH_MORE_PADDING = 5'b00011; // compare the value in r1 to 128
 
 
 
@@ -47,7 +50,7 @@ module processor(
     // ALU function block
     function logic[7:0] ALU(input logic[7:0] r1, input logic[7:0] r2, input logic[7:0] r3,
       input logic t1,
-      input logic[4:0] opcode) begin
+      input logic[4:0] opcode);
       if(t1) begin
         if(opcode == AND) begin // AND
           ALU = r1 & r2;
@@ -61,6 +64,7 @@ module processor(
       end
       else begin
         if(opcode == LSL) begin // LSL
+          //$display("LSL: %b", r3);
           ALU = r3 << 1;
         end
         else if(opcode == INC) begin // INC
@@ -78,26 +82,31 @@ module processor(
 
     // Computer is basically an FSM so make it an FSM!!!!!
     always_ff @(posedge clk) begin
-      if(reset) begin
+      if(init) begin
         PC <= 8'b00000000;
+        //$display("Hello\n");
+      //  $display("%x", init);
         state <= IDLE;
       end
       else
-        case(state) begin
+        case(state)
           IDLE: begin
-            if(!reset) begin
+          //  $display("%x", init);
+            if(!init) begin
               PC <= 8'b00000000;
               for(int i = 0; i < 16; i++) begin
                 regs[i] <= 8'b00000000;
               end
+            //  $display("%b", imem[50]);
               state <= COMPUTE;
             end
 
           end
 
           COMPUTE: begin
-          case(instr[8:5]):
+          case(instr[8:5])
             LW: begin
+          //    $display("Hi from LW!");
               regs[instr[4:2]] <= dmem[regs[instr[1:0]]];
               PC <= PC + 1;
               state <= COMPUTE;
@@ -118,6 +127,7 @@ module processor(
               state <= COMPUTE;
             end
             OR: begin
+            $display("OR: %b", regs[5]);
               regs[5] <= ALU(regs[instr[4:2]], regs[instr[1:0]], regs[instr[4:1]], 1, instr[8:5]);
               PC <= PC + 1;
               state <= COMPUTE;
@@ -144,16 +154,24 @@ module processor(
               state <= COMPUTE;
             end
             MOV: begin
-            case(instr[4:0]):
+            case(instr[4:0])
                 MOV_41: regs[0] <= 41;
-                MOV_64ENC: regs[1] <= 64;
+                MOV_ENC64: regs[1] <= 64;
+                MOV_ZERO: regs[0] <= 0;
+                MOV_SPACE2: regs[2] <= 8'h20;
 
             endcase
             PC <= PC + 1;
             state <= COMPUTE;
             end
             MOVREG: begin
-            case(instr[4:0]):
+            case(instr[4:0])
+              MOVREG_TAP_ADDR: regs[9] <= regs[2];
+              MOVREG_TAP_ADDR_BACK: regs[2] <= regs[9];
+              MOVREG_SEED: regs[8] <= regs[5];
+              MOVREG_BACKSEED: regs[5] <= regs[8];
+
+
 
 
             endcase
@@ -161,15 +179,44 @@ module processor(
             state <= COMPUTE;
             end
             BRANCH: begin
-            case(instr[4:0]):
+            case(instr[4:0])
               BRANCH_PADDING: begin
                 if(regs[4] == 0) begin
                   PC <= PC + 1;
                 end
                 else begin
-                  PC <= 
+                  PC <= 7;
                 end
-                
+
+              end
+              BRANCH_MESSAGE: begin
+                if(regs[0] == 41) begin
+                  PC <= PC + 1;
+
+                end
+                else begin
+                  PC <= 22;
+                end
+              end
+
+              BRANCH_END: begin
+                if(regs[1] == 128) begin
+                  PC <= 50;
+                end
+                else begin
+                  PC <= PC + 1;
+                end
+
+              end
+
+              BRANCH_MORE_PADDING: begin
+                if(regs[1] == 128) begin
+                  PC <= PC + 1;
+                end
+                else begin
+                  PC <= 37;
+                end
+
               end
 
 
@@ -181,6 +228,7 @@ module processor(
               PC <= 8'b00000000;
               state <= DUMMY;
               done <= 1;
+              $display("done");
             end
 
 
