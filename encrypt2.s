@@ -48,7 +48,7 @@ b end             @ check r1, if equal to 128 branch to end
 morepadding:
           movreg seed        @ move the seed in r5 to r8
           movreg tap_addr    @ move the value in r2 into r9
-          move space2        @ move the space char into r2
+          mov space2        @ move the space char into r2
           xor r5, r2         @ xor the seed with the space char in r2 and store in r5
           sw r5, r1          @ store the encrypted char at mem location specified by r1
           inc r1             @ increment the value in r1 by 1
