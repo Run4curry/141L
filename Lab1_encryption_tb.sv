@@ -17,7 +17,7 @@ module Lab1_encryption_tb      ;
   logic[7:0] i    = 0          ;		 // index counter -- increments on each clock cycle
 // our original American Standard Code for Information Interchange message follows
 // note in practice your design should be able to handle ANY ASCII string
-  string     str  = "Mr. Watson, come here. I want to see you.";
+  string     str  = "Mr. Wlgedb, come here. I want to see you.";
 // displayed encrypted string will go here:
   string     str_enc[64]       ;
 
@@ -26,9 +26,9 @@ module Lab1_encryption_tb      ;
   initial begin
   clk         = 0            ; 		 // initialize clock
   init        = 1            ;		 // activate reset
-	pre_length  = 8            ;         // set preamble length
+	pre_length  = 23            ;         // set preamble length
 	lfsr_ptrn   = 8'hb8        ;         // select one of 8 permitted
-	lfsr_state  = 8'h11        ;         // any nonzero value (zero may be helpful for debug)
+	lfsr_state  = 8'h23        ;         // any nonzero value (zero may be helpful for debug)
     LFSR        = lfsr_state   ;         // initalize test bench's LFSR
     $display("%s",str)         ;         // print original message in transcript window
     $readmemb("assembled_encrypt.txt", dut.imem);
@@ -55,7 +55,7 @@ module Lab1_encryption_tb      ;
         i,message[i],msg_padded[i],msg_crypto[i]);//,str[i],str_enc[i]);
 */
     for(int n=0; n<64; n++)
-      $display("%d bench msg: %h dut msg: %h",n, msg_crypto[n], dut.dmem[n+64]);
+      $display("%d bench msg: %h dut msg: %h", n, msg_crypto[n], dut.dmem[n+64]);
     $stop;
   end
 
@@ -67,10 +67,10 @@ end										 // continue
 
 always @(negedge clk) begin				 // testbench will change on falling clocks
   if(i < 64) begin
-    $display("msg_padded[%d] %b", i, msg_padded[i]);
-    $display("LFSR[%d] %b", i, LFSR);
+    //$display("msg_padded[%d] %b", i, msg_padded[i]);
+    //$display("LFSR[%d] %b", i, LFSR);
     msg_crypto[i]        = msg_padded[i] ^ LFSR;//{1'b0,LFSR[6:0]};	   // encrypt 7 LSBs
-    $display("msg_crypto[%d] %b", i, msg_crypto[i]);
+    //$display("msg_crypto[%d] %b", i, msg_crypto[i]);
   //  $displayb(msg_padded[i],,,LFSR,,,msg_crypto[i]);
     LFSR                 = (LFSR<<1)+(^(LFSR&lfsr_ptrn));//{LFSR[6:0],(^LFSR[5:3]^LFSR[7])};		   // roll the rolling code
     str_enc[i]           = string'(msg_crypto[i]);

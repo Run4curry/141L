@@ -127,7 +127,7 @@ module processor(
               state <= COMPUTE;
             end
             OR: begin
-            $display("OR: %b", regs[5]);
+            //$display("OR: %b", regs[5]);
               regs[5] <= ALU(regs[instr[4:2]], regs[instr[1:0]], regs[instr[4:1]], 1, instr[8:5]);
               PC <= PC + 1;
               state <= COMPUTE;
@@ -195,13 +195,13 @@ module processor(
 
                 end
                 else begin
-                  PC <= 22;
+                  PC <= 23;
                 end
               end
 
               BRANCH_END: begin
                 if(regs[1] == 128) begin
-                  PC <= 50;
+                  PC <= 53;
                 end
                 else begin
                   PC <= PC + 1;
@@ -214,7 +214,7 @@ module processor(
                   PC <= PC + 1;
                 end
                 else begin
-                  PC <= 37;
+                  PC <= 39;
                 end
 
               end
