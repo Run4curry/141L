@@ -35,6 +35,7 @@ module processor(
     const logic[4:0] MOV_TAP_ADDR = 5'b00101; // move 140 into r2
     const logic[4:0] MOV_COUNTTAPS = 5'b00110; // move 0 into r14
     const logic[4:0] MOV_TAP_ZERO = 5'b00111; // move 0 into r7
+    const logic[4:0] MOV_SPACE = 5'b01000; // move 0 into r0
 
     // MOVREG constants for encrypt could cross over
     const logic[4:0] MOVREG_TAP_ADDR = 5'b00000; // move value in r2 into r9
@@ -54,13 +55,12 @@ module processor(
   const logic[4:0] BRANCH_SKIP = 5'b00110; // compare value in r2 to 0
   const logic[4:0] BRANCH_NOTEQUAL = 5'b00111; // compare value in r5 with r3
   const logic[4:0] BRANCH_FOR = 5'b01000; // compare the value in r14 to 8
-  const logic[4:0] BRANCH_WHILE = 5'b01001; // branch back to while
-  const logic[4:0] BRANCH_INT = 5'b01010; // branch back to int
-  const logic[4:0] BRANCH_INT2 = 5'b01011; // branch back to int2
-  const logic[4:0] BRANCH_DECRYPTION = 5'b01100; // compare r2 to 0
-  const logic[4:0] BRANCH_NEXT2 = 5'b01101; // branch back to next2
-  const logic[4:0] BRANCH_DECRYPTION3 = 5'b01110; // compare r3 to space
-  const logic[4:0] BRANCH_DECRYPTION2 = 5'b01111; // compare r0 to 41
+  const logic[4:0] BRANCH_INT1 = 5'b01001; // branch back to int
+  const logic[4:0] BRANCH_INT2 = 5'b01010; // branch back to int2
+  const logic[4:0] BRANCH_DECRYPTION = 5'b01011; // compare r2 to 0
+  const logic[4:0] BRANCH_NEXT2 = 5'b01100; // branch back to next2
+  const logic[4:0] BRANCH_DECRYPTION3 = 5'b01101; // compare r3 to space
+  const logic[4:0] BRANCH_DECRYPTION2 = 5'b01110; // compare r0 to 41
 
 
 
