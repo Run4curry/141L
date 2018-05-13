@@ -29,13 +29,20 @@ module processor(
     const logic[4:0] MOV_41 = 5'b00000; // moving 41 into r0
     const logic[4:0] MOV_ENC64 = 5'b00001; // moving 64 into r1
     const logic[4:0] MOV_SPACE2 = 5'b00010; // move space char into r2
-  const logic[4:0] MOV_ZERO = 5'b00011; // move 0 into r0
+    const logic[4:0] MOV_ZERO = 5'b00011; // move 0 into r0
+
+    const logic[4:0] MOV_8TAPS = 5'b00100; // move 8 into r11
+    const logic[4:0] MOV_TAP_ADDR = 5'b00101; // move 140 into r2
+    const logic[4:0] MOV_COUNTTAPS = 5'b00110; // move 0 into r14
+    const logic[4:0] MOV_TAP_ZERO = 5'b00111; // move 0 into r7
 
     // MOVREG constants for encrypt could cross over
     const logic[4:0] MOVREG_TAP_ADDR = 5'b00000; // move value in r2 into r9
     const logic[4:0] MOVREG_SEED = 5'b00001; // move value in r5 into r8
     const logic[4:0] MOVREG_TAP_ADDR_BACK = 5'b00010; // move value in r9 to r2
     const logic[4:0] MOVREG_BACKSEED = 5'b00011; // move value in r8 to r5
+    const logic[4:0] MOVREG_SEED2 = 5'b00100; // move value in r5 to r3
+    const logic[4:0] MOVREG_NEWSEED = 5'b00101; // move value in r3 to r5
 
   // BRANCH
   const logic[4:0] BRANCH_PADDING = 5'b00000; // compare the value in r4 with the value 0
@@ -159,6 +166,10 @@ module processor(
                 MOV_ENC64: regs[1] <= 64;
                 MOV_ZERO: regs[0] <= 0;
                 MOV_SPACE2: regs[2] <= 8'h20;
+                MOV_8TAPS: regs[11] <= 8;
+                MOV_TAP_ADDR: regs[2] <= 140;
+                MOV_COUNTTAPS: regs[14] <= 0;
+                MOV_TAP_ZERO: regs[7] <= 0;
 
             endcase
             PC <= PC + 1;
@@ -170,6 +181,8 @@ module processor(
               MOVREG_TAP_ADDR_BACK: regs[2] <= regs[9];
               MOVREG_SEED: regs[8] <= regs[5];
               MOVREG_BACKSEED: regs[5] <= regs[8];
+              MOVREG_SEED2: regs[3] <= regs[5];
+              MOVREG_NEWSEED: regs[5] <= regs[3];
 
 
 

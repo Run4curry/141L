@@ -1,10 +1,8 @@
-mov 64enc     @ move a counter value of 64 into r1
+mov enc64     @ move a counter value of 64 into r1
 mov 8taps     @ move the value 8 into r11
 mov zero         @ move the value 0 into r0
 
 mov space     @ move the space char into r7
-sw r7, r0     @ store the space char at the memory location specified by r0
-inc r0        @ increment the value in r0
 lw r2, r1     @ load the value from the memory location in r1
 inc r1        @ increment the value in r1
 xor r7, r2    @ xor the encrypted char in r2 with the space char in r7 and store in r5
@@ -15,8 +13,6 @@ while:
       movreg seed    @ move the seed in r5 to r8
       mov space   @ move the space char into r7
       mov counttaps @ move the value 0 into r14
-      sw r7, r0     @ store the space char at the memory location specified by r0
-      inc r0        @ increment the value in r0
       lw r2, r1     @ load the encrypted char from memory location in r1
       inc r1        @ increment the value in r1
       xor r7, r2    @ xor the encrypted char in r2 with space char in r7 to produce next seed store in r5
@@ -65,20 +61,39 @@ next2:
     movreg tap_addr_back  @ move value in r9 back in to r2
     b next2            @ branch back to next2
 
-decryption:     @ decrypt rest of the message
-decryption2:
+decryption:     @ decrypt rest of the message but first find first non-space
+decryption3:
+    movreg seed       @ move the seed in r5 to r8
     movreg tap_addr   @ move value in r2 into r9
+    lw r2, r1         @ load in the encrypted char from memory location specified by r1
+    inc r1            @ increment the value in r1
+    xor r5, r2        @ xor the seed with the char in r2 and store in r5
+    movreg seed2      @ move the value in r5 to r3
+    movreg backseed   @ move the value in r8 to r5
+    movreg tap_addr_back  @ move the value in r9 into r2
+    and r5, r2        @ and the seed with tap in r2 store in r10
+    par r10           @ take parity of the thing in r10 and store in r2
+    lsl r5            @ left shift seed in r5 by 1
+    or r5, r2         @ or left shifted seed in r5 with parity result in r2 and store in r5 new seed
+    movreg tap_addr_back @ move the value in r9 back into r2
+    b decryption3     @ branch to decryption3 if value in r3 is a space
+    lw r3, r0         @ otherwise load the decrypted char at memory location specified by r0
+    inc r0            @ increment the value in r0
+
+decryption2:
+    movreg seed       @ move the seed in r5 to r8
+    movreg tap_addr   @ move value in r2 into r9
+    lw r2, r1         @ load in the encrypted char from memory location specified by r1
+    inc r1            @ increment the value in r1
+    xor r5, r2        @ xor the seed with the char in r2 and store in r5
+    sw r5, r0         @ store decrypted char at memory location specified by r0
+    inc r0            @ increment the value in r0
+    movreg backseed   @ move the value in r8 to r5
+    movreg tap_addr_back  @ move the value in r9 into r2
     and r5, r2        @ and seed in r5 with tap pattern in r2 and store in r10
     lsl r5            @ left shift the value in r5
     par r10           @ take parity of thing in r10 and store in r2
     or r5, r2         @ or left shifted seed in r5 with parity result in r2 and store back in r5
-    lw r2, r1         @ load in encrypted char from address specified in r1
-    inc r1            @ increment the value in r1
-    movreg seed      @ move seed in r5 into r8
-    xor r5, r2       @ xor the shifted seed in r5 with encrypted char in r2 and store in r5
-    sw r5, r0        @ store the result of r5 into memory location specified by r0
-    inc r0           @ increment the value of r0 by 1
-    movreg backseed  @ move the value in r8 back into r5
     movreg tap_addr_back  @ move seed value in r9 back into r2
-    b decryption2     @ if value in r0 not equal to 64 branch back to decryption2
+    b decryption2     @ if value in r0 not equal to 41 branch back to decryption2
 stop      @ halts the program sets the done flag to one
