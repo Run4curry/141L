@@ -49,6 +49,18 @@ module processor(
   const logic[4:0] BRANCH_MESSAGE = 5'b00001; // compare the value in r0 to 41
   const logic[4:0] BRANCH_END = 5'b00010; // compare the value in r1 to 128
   const logic[4:0] BRANCH_MORE_PADDING = 5'b00011; // compare the value in r1 to 128
+  const logic[4:0] BRANCH_WHILE = 5'b00100; // always branch
+  const logic[4:0] BRANCH_NEXT = 5'b00101; // compare value in r11 to 1
+  const logic[4:0] BRANCH_SKIP = 5'b00110; // compare value in r2 to 0
+  const logic[4:0] BRANCH_NOTEQUAL = 5'b00111; // compare value in r5 with r3
+  const logic[4:0] BRANCH_FOR = 5'b01000; // compare the value in r14 to 8
+  const logic[4:0] BRANCH_WHILE = 5'b01001; // branch back to while
+  const logic[4:0] BRANCH_INT = 5'b01010; // branch back to int
+  const logic[4:0] BRANCH_INT2 = 5'b01011; // branch back to int2
+  const logic[4:0] BRANCH_DECRYPTION = 5'b01100; // compare r2 to 0
+  const logic[4:0] BRANCH_NEXT2 = 5'b01101; // branch back to next2
+  const logic[4:0] BRANCH_DECRYPTION3 = 5'b01110; // compare r3 to space
+  const logic[4:0] BRANCH_DECRYPTION2 = 5'b01111; // compare r0 to 41
 
 
 
