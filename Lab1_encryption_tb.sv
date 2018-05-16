@@ -41,6 +41,14 @@ module Lab1_encryption_tb      ;
   dut.dmem[41] = pre_length;       // number of bytes preceding message
 	dut.dmem[42] = lfsr_ptrn;		 // LFSR feedback tap positions (8 possible ptrns)
 	dut.dmem[43] = lfsr_state;		 // LFSR starting state (nonzero)
+  dut.dmem[140] = 8'b11100001;
+  dut.dmem[141] = 8'b11010100;
+  dut.dmem[142] = 8'b11000110;
+  dut.dmem[143] = 8'b10111000;
+  dut.dmem[144] = 8'b10110100;
+  dut.dmem[145] = 8'b10110010;
+  dut.dmem[146] = 8'b11111010;
+  dut.dmem[147] = 8'b11110011;
 //    $display("%d  %h  %h  %h  %s",i,message[i],msg_padded[i],msg_crypto[i],str[i]);
     #20ns init = 0             ;
     #60ns; 	                             // wait for 6 clock cycles of nominal 10ns each
@@ -58,6 +66,11 @@ module Lab1_encryption_tb      ;
       $display("%d bench msg: %h dut msg: %h", n, msg_crypto[n], dut.dmem[n+64]);
     $stop;
   end
+  $readmemb("assembled_decrypt.txt", dut.imem);
+  #20ns init = 0;
+  #60ns;
+
+
 
 always begin							 // continuous loop
   #5ns clk = 1;							 // clock tick

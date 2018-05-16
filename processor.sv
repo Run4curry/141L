@@ -243,6 +243,80 @@ module processor(
                 end
 
               end
+              BRANCH_WHILE: begin
+                PC <= 7;
+              end
+              BRANCH_NEXT: begin
+                if(regs[11] == 0) begin
+                  PC <= 44;
+                end
+                else begin
+                  PC <= PC + 1;
+                end
+              end
+
+              BRANCH_SKIP: begin
+                if(regs[2] == 0) begin
+                  PC <= 33;
+                end
+                else begin
+                  PC <= PC + 1;
+                end
+
+              end
+
+              BRANCH_NOTEQUAL: begin
+                if(regs[5] != regs[3]) begin
+                  PC <= 36;
+                end
+                else begin
+                  PC <= PC + 1;
+                end
+              end
+              BRANCH_FOR: begin
+                if(regs[14] != 8) begin
+                  PC <= 18;
+                end
+                else begin
+                  PC <= PC + 1;
+                end
+              end
+              BRANCH_INT1: begin
+                PC <= 18;
+              end
+              BRANCH_INT2: begin
+                PC <= 27;
+              end
+              BRANCH_DECRYPTION: begin
+                if(regs[2] != 0) begin
+                  PC <= 50;
+                end
+                else begin
+                  PC <= PC + 1;
+                end
+              end
+
+              BRANCH_NEXT2: begin
+                PC <= 44;
+              end
+
+              BRANCH_DECRYPTION3: begin
+                if(regs[3] == 8'h20) begin
+                  PC <= 50;
+                end
+                else begin
+                  PC <= PC + 1;
+                end
+              end
+
+              BRANCH_DECRYPTION2: begin
+                if(regs[0] != 41) begin
+                  PC <= 66;
+                end
+                else begin
+                  PC <= PC + 1;
+                end
+              end
 
 
             endcase
