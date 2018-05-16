@@ -55,6 +55,7 @@ module Lab1_encryption_tb      ;
     wait(done);                          // wait for DUT's done flag to go high
 	// print testbench version of encrypted message next to DUT's version -- should match
     init = 1; // set init to 1 so processor is chilling
+    done = 0; // set this to 0 as well? I think
 /*    if(i<15)
       $display("%d  %h  %h  %h  %s  %s",
         i,message[i],msg_padded[i],msg_crypto[i],str[i-16],str_enc[i]);
@@ -63,12 +64,20 @@ module Lab1_encryption_tb      ;
         i,message[i],msg_padded[i],msg_crypto[i]);//,str[i],str_enc[i]);
 */
     for(int n=0; n<64; n++)
-      $display("%d bench msg: %h dut msg: %h", n, msg_crypto[n], dut.dmem[n+64]);
-    $stop;
-  end
+      assert(msg_crypto[i] == dut.dmem[i+64]);
   $readmemb("assembled_decrypt.txt", dut.imem);
   #20ns init = 0;
   #60ns;
+  wait(done);
+  init = 1;
+  done = 0;
+  for(int i = 0; i < 41; i++)
+    assert(str[i] == dut.dmem[i]);
+
+$display("Tests finished!!!!");
+$stop;
+end
+
 
 
 
