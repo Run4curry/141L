@@ -48,35 +48,34 @@
 0111_01011 // b decryption
 1100_00010 // movreg tap_addr_back
 0111_01100 // b next2
-1100_00001 // movreg seed
 1100_00000 // movreg tap_addr
+0100_10110 // and r5, r2
+1001_10100 // par r10
+0110_01010 // lsl r5
+0101_10110 // or r5, r2
 0000_01001 // lw r2, r1
 1000_00010 // inc r1
+1100_00001 // movreg seed
 0011_10110 // xor r5, r2
 1100_00100 // movreg seed2
 1100_00011 // movreg backseed
 1100_00010 // movreg tap_addr_back
+0111_01101 // b decryption3
+0001_01100 // sw r3, r0
+1000_00000 // inc r0
+1100_00000 // movreg tap_addr
 0100_10110 // and r5, r2
 1001_10100 // par r10
 0110_01010 // lsl r5
 0101_10110 // or r5, r2
-1100_00010 // movreg tap_addr_back
-0111_01101 // b decryption3
-0000_01100 // lw r3, r0
-1000_00000 // inc r0
-1100_00001 // movreg seed
-1100_00000 // movreg tap_addr
 0000_01001 // lw r2, r1
 1000_00010 // inc r1
+1100_00001 // movreg seed
 0011_10110 // xor r5, r2
-0001_10100 // sw r5, r0
-1000_00000 // inc r0
+1100_00100 // movreg seed2
 1100_00011 // movreg backseed
 1100_00010 // movreg tap_addr_back
-0100_10110 // and r5, r2
-0110_01010 // lsl r5
-1001_10100 // par r10
-0101_10110 // or r5, r2
-1100_00010 // movreg tap_addr_back
+0001_01100 // sw r3, r0
+1000_00000 // inc r0
 0111_01110 // b decryption2
 1011_00000 // stop
