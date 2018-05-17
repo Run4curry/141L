@@ -17,7 +17,7 @@ module Lab1_encryption_tb      ;
   logic[7:0] i    = 0          ;		 // index counter -- increments on each clock cycle
 // our original American Standard Code for Information Interchange message follows
 // note in practice your design should be able to handle ANY ASCII string
-  string     str  = "Mr. Wlgedb, come here. I want to see you.";
+  string     str  = "Mrk Wlgedb, coze here. I want to see ywu.";
 // displayed encrypted string will go here:
   string     str_enc[64]       ;
 
@@ -27,8 +27,8 @@ module Lab1_encryption_tb      ;
   clk         = 0            ; 		 // initialize clock
   init        = 1            ;		 // activate reset
 	pre_length  = 23            ;         // set preamble length
-	lfsr_ptrn   = 8'hb8        ;         // select one of 8 permitted
-	lfsr_state  = 8'h23        ;         // any nonzero value (zero may be helpful for debug)
+	lfsr_ptrn   = 8'hf3        ;         // select one of 8 permitted
+	lfsr_state  = 8'h35        ;         // any nonzero value (zero may be helpful for debug)
     LFSR        = lfsr_state   ;         // initalize test bench's LFSR
     $display("%s",str)         ;         // print original message in transcript window
     $readmemb("assembled_encrypt.txt", dut.imem);
@@ -55,7 +55,6 @@ module Lab1_encryption_tb      ;
     wait(done);                          // wait for DUT's done flag to go high
 	// print testbench version of encrypted message next to DUT's version -- should match
     init = 1; // set init to 1 so processor is chilling
-    done = 0; // set this to 0 as well? I think
 /*    if(i<15)
       $display("%d  %h  %h  %h  %s  %s",
         i,message[i],msg_padded[i],msg_crypto[i],str[i-16],str_enc[i]);
@@ -64,22 +63,21 @@ module Lab1_encryption_tb      ;
         i,message[i],msg_padded[i],msg_crypto[i]);//,str[i],str_enc[i]);
 */
     for(int n=0; n<64; n++)
-      assert(msg_crypto[i] == dut.dmem[i+64]);
-  $readmemb("assembled_decrypt.txt", dut.imem);
-  #20ns init = 0;
-  #60ns;
-  wait(done);
-  init = 1;
-  done = 0;
-  for(int i = 0; i < 41; i++)
-    assert(str[i] == dut.dmem[i]);
+      $display("Theirs: %x Ours: %x", msg_crypto[n], dut.dmem[n+64]);
+      //assert(msg_crypto[n] == dut.dmem[n+64]);
+    $readmemb("assembled_decrypt2.txt", dut.imem);
+    for(int i = 0; i < 41; i++)
+      dut.dmem[i] = 8'h20;
+    #20ns init = 0;
+    #60ns;
+    wait(done);
+    init = 1;
+    for(int i = 0; i < 41; i++)
+      $display("orig: %s ours: %s", str[i], dut.dmem[i]);
 
-$display("Tests finished!!!!");
-$stop;
-end
-
-
-
+    $display("Tests finished!!!!");
+    $stop;
+  end
 
 always begin							 // continuous loop
   #5ns clk = 1;							 // clock tick
@@ -91,6 +89,7 @@ always @(negedge clk) begin				 // testbench will change on falling clocks
   if(i < 64) begin
     //$display("msg_padded[%d] %b", i, msg_padded[i]);
     //$display("LFSR[%d] %b", i, LFSR);
+    $display("%x", LFSR);
     msg_crypto[i]        = msg_padded[i] ^ LFSR;//{1'b0,LFSR[6:0]};	   // encrypt 7 LSBs
     //$display("msg_crypto[%d] %b", i, msg_crypto[i]);
   //  $displayb(msg_padded[i],,,LFSR,,,msg_crypto[i]);
