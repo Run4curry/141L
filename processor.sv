@@ -35,7 +35,7 @@ module processor(
     const logic[4:0] MOV_TAP_ADDR = 5'b00101; // move 140 into r2
     const logic[4:0] MOV_COUNTTAPS = 5'b00110; // move 0 into r14
     const logic[4:0] MOV_TAP_ZERO = 5'b00111; // move 0 into r7
-    const logic[4:0] MOV_SPACE = 5'b01000; // move 0 into r0
+    const logic[4:0] MOV_SPACE = 5'b01000; // move space into r7
 
     // MOVREG constants for encrypt could cross over
     const logic[4:0] MOVREG_TAP_ADDR = 5'b00000; // move value in r2 into r9
@@ -103,6 +103,8 @@ module processor(
     always_ff @(posedge clk) begin
       if(init) begin
         PC <= 8'b00000000;
+        done <= 0;
+        $display("%d",done);
         //$display("Hello\n");
       //  $display("%x", init);
         state <= IDLE;
@@ -123,6 +125,10 @@ module processor(
           end
 
           COMPUTE: begin
+        /*  if(regs[11] <= 8) begin
+            $display("r11: %d", regs[11]);
+            $display("PC: %d", PC + 1);
+          end*/
           case(instr[8:5])
             LW: begin
           //    $display("Hi from LW!");
@@ -168,6 +174,10 @@ module processor(
               state <= COMPUTE;
             end
             DEC: begin
+              if(instr[4:1] == 4'b1011) begin
+                $display("r11: %d", regs[11]);
+                $display("r9: %d", regs[9]);
+              end
               regs[instr[4:1]] <= ALU(regs[instr[4:2]], regs[instr[1:0]], regs[instr[4:1]], 0, instr[8:5]);
               PC <= PC + 1;
               state <= COMPUTE;
@@ -179,9 +189,13 @@ module processor(
                 MOV_ZERO: regs[0] <= 0;
                 MOV_SPACE2: regs[2] <= 8'h20;
                 MOV_8TAPS: regs[11] <= 8;
-                MOV_TAP_ADDR: regs[2] <= 140;
+                MOV_TAP_ADDR: begin
+                  regs[2] <= 140;
+                  $display("r5: %x", regs[5]);
+                end
                 MOV_COUNTTAPS: regs[14] <= 0;
                 MOV_TAP_ZERO: regs[7] <= 0;
+                MOV_SPACE: regs[7] <= 8'h20;
 
             endcase
             PC <= PC + 1;
@@ -247,8 +261,9 @@ module processor(
                 PC <= 7;
               end
               BRANCH_NEXT: begin
-                if(regs[11] == 0) begin
+                if(regs[11] == 1) begin
                   PC <= 44;
+                  $display("BRANCHED!!");
                 end
                 else begin
                   PC <= PC + 1;
@@ -289,6 +304,7 @@ module processor(
               end
               BRANCH_DECRYPTION: begin
                 if(regs[2] != 0) begin
+                  $display("R2 tap: %x", regs[2]);
                   PC <= 50;
                 end
                 else begin
@@ -311,7 +327,7 @@ module processor(
 
               BRANCH_DECRYPTION2: begin
                 if(regs[0] != 41) begin
-                  PC <= 66;
+                  PC <= 65;
                 end
                 else begin
                   PC <= PC + 1;
@@ -339,6 +355,8 @@ module processor(
           end
           DUMMY: begin // just to ensure that reset gets set to 1 on the testbench's side
           // will need to tweak this later probably
+            $display("%d", done);
+            done <= 0;
             state <= IDLE;
 
           end
