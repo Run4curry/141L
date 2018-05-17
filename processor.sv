@@ -104,7 +104,7 @@ module processor(
       if(init) begin
         PC <= 8'b00000000;
         done <= 0;
-        $display("%d",done);
+        //$display("%d",done);
         //$display("Hello\n");
       //  $display("%x", init);
         state <= IDLE;
@@ -191,7 +191,7 @@ module processor(
                 MOV_8TAPS: regs[11] <= 8;
                 MOV_TAP_ADDR: begin
                   regs[2] <= 140;
-                  $display("r5: %x", regs[5]);
+                  //$display("r5: %x", regs[5]);
                 end
                 MOV_COUNTTAPS: regs[14] <= 0;
                 MOV_TAP_ZERO: regs[7] <= 0;
@@ -304,7 +304,7 @@ module processor(
               end
               BRANCH_DECRYPTION: begin
                 if(regs[2] != 0) begin
-                  $display("R2 tap: %x", regs[2]);
+                  //$display("R2 tap: %x", regs[2]);
                   PC <= 50;
                 end
                 else begin
@@ -343,7 +343,7 @@ module processor(
               PC <= 8'b00000000;
               state <= DUMMY;
               done <= 1;
-              $display("done");
+            //  $display("done");
             end
 
 
@@ -355,7 +355,7 @@ module processor(
           end
           DUMMY: begin // just to ensure that reset gets set to 1 on the testbench's side
           // will need to tweak this later probably
-            $display("%d", done);
+        //    $display("%d", done);
             done <= 0;
             state <= IDLE;
 
