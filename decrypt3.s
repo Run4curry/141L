@@ -1,4 +1,4 @@
-mov 64enc       @ move a counter value of 64 into r1
+mov enc64       @ move a counter value of 64 into r1
 mov 8taps       @ move the value 8 into r11
 mov zero        @ move the value 0 into r0
 
@@ -23,6 +23,7 @@ while2:
       int1_2:
                       movreg tap_addr   @ move value in r2 into r9
                       lw r2, r2         @ load in a tap pattern
+                      inc r14           @ increment the value in r14
                       inc r9            @ increment value in r9
                       b skip2           @ if the value in r2 is 0, branch to skip2
                       and r5, r2        @ take seed in r5 and with tap pattern in r2 store result in r10
@@ -31,15 +32,14 @@ while2:
                       or r5, r2         @ or left shifted seed in r5 with the parity result in r2 store back in r5
                       b notequal2       @ check the value in r5 with r3 if not equal branch to notequal2
                       int2_2:
-                      inc r14           @ increase number of taps by 1
                       movreg tap_addr_back  @ move value in r9 back in to r2
                       movreg backseed       @ move old seed from r8 back in to r5
                       b for2                @ check to see if r14 equal to 8 if not branch back to for2
                       movreg newseed        @ move the seed in r3 into r5
                       b while2              @ branch back to while2
     skip2:
-          inc r14       @ move to the next tap
           movreg tap_addr_back  @ move value in r9 back into r2
+          b edge2          @ if value in r14 equal to 8 branch to movreg newseed
           b int1_2        @ branch back to the for loop
 
     notequal2:  @ not equal
@@ -57,7 +57,7 @@ while2:
         movreg tap_addr   @ move value in r2 into r9
         lw r2, r2         @ load in a tap pattern from memory location in r2
         inc r9            @ increment value in r9 by 1
-        b find            @ branch to decryption_2 if r2 is not equal to 0
+        b find            @ branch to find if r2 is not equal to 0
         movreg tap_addr_back  @ move value in r9 back in to r2
         b next2_2          @ branch back to next2_2
 
