@@ -23,6 +23,7 @@ while:
       int1:
                     movreg tap_addr @ move value in r2 into r9
                     lw r2, r2 @ load in a tap pattern from memory location held in r2
+                    inc r14   @ increment the value in r14
                     inc r9    @ increment value in r9
                     b skip    @ if the value in r2 is 0, branch to skip
                     and r5, r2  @ take seed in r5 and with tap pattern in r2 store result in r10
@@ -31,15 +32,14 @@ while:
                     or r5, r2 @ or left shifted seed in r5 with the parity result in r2 store back in r5
                     b notequal  @ check the value in r5 with r3 if not equal branch to notequal
                     int2:
-                    inc r14     @ increase number of taps by 1
                     movreg tap_addr_back @ move value in r9 back in to r2
                     movreg backseed      @ move old seed from r8 back in to r5
                     b for                @ check to see if r14 equal to 8 if not branch back to for
                     movreg newseed       @ move the seed in r3 into r5
                     b while              @ branch back to while
 skip:
-    inc r14   @ move to the next tap
     movreg tap_addr_back  @ move value in r9 back into r2
+    b edge                @ if value in r14 equal to 8 branch to movreg newseed
     b int1                @ branch back to the for loop
 
 notequal: @ not equal
