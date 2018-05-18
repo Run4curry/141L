@@ -77,7 +77,6 @@ module top_tb ()            ;
         else
         break;
     end
-
     clk  = 0;  // initialize clock
     init = 1;  // activate reset
 
@@ -231,7 +230,7 @@ module top_tb ()            ;
     init = 1;
     //#10ns $display();
     $display("program 2:");
-    for(int n=0; n<55; n++)
+    for(int n=0; n<41; n++)
       $display("%d bench msg: %h dut msg: %h",n, str2[n], dut.dmem[n]);
 
     // run program 1
