@@ -61,6 +61,7 @@ module processor(
   const logic[4:0] BRANCH_NEXT2 = 5'b01100; // branch back to next2
   const logic[4:0] BRANCH_DECRYPTION3 = 5'b01101; // compare r3 to space
   const logic[4:0] BRANCH_DECRYPTION2 = 5'b01110; // compare r0 to 41
+  const logic[4:0] BRANCH_EDGE = 5'b01111; // compare r14 to 8
 
 
 
@@ -129,6 +130,7 @@ module processor(
             $display("r11: %d", regs[11]);
             $display("PC: %d", PC + 1);
           end*/
+        //  $display("PC: %d", PC + 1);
           case(instr[8:5])
             LW: begin
           //    $display("Hi from LW!");
@@ -174,10 +176,12 @@ module processor(
               state <= COMPUTE;
             end
             DEC: begin
-              if(instr[4:1] == 4'b1011) begin
+              /*if(instr[4:1] == 4'b1011) begin
                 $display("r11: %d", regs[11]);
                 $display("r9: %d", regs[9]);
-              end
+                $display("r5: %x", regs[5]);
+                $display("r3: %x", regs[3]);
+              end*/
               regs[instr[4:1]] <= ALU(regs[instr[4:2]], regs[instr[1:0]], regs[instr[4:1]], 0, instr[8:5]);
               PC <= PC + 1;
               state <= COMPUTE;
@@ -204,11 +208,19 @@ module processor(
             MOVREG: begin
             case(instr[4:0])
               MOVREG_TAP_ADDR: regs[9] <= regs[2];
-              MOVREG_TAP_ADDR_BACK: regs[2] <= regs[9];
+              MOVREG_TAP_ADDR_BACK: begin
+                regs[2] <= regs[9];
+                //$display("tap_addr_back: r9: %d", regs[9]);
+                //$display("r14: %d", regs[14]);
+                //$display("PC: %d", PC);
+              end
               MOVREG_SEED: regs[8] <= regs[5];
               MOVREG_BACKSEED: regs[5] <= regs[8];
               MOVREG_SEED2: regs[3] <= regs[5];
-              MOVREG_NEWSEED: regs[5] <= regs[3];
+              MOVREG_NEWSEED: begin
+                regs[5] <= regs[3];
+              //  $display("NEWSEED");
+              end
 
 
 
@@ -263,7 +275,7 @@ module processor(
               BRANCH_NEXT: begin
                 if(regs[11] == 1) begin
                   PC <= 44;
-                  $display("BRANCHED!!");
+              //    $display("BRANCHED!!");
                 end
                 else begin
                   PC <= PC + 1;
@@ -289,7 +301,7 @@ module processor(
                 end
               end
               BRANCH_FOR: begin
-                if(regs[14] != 8) begin
+                if(regs[14] < 8) begin
                   PC <= 18;
                 end
                 else begin
@@ -300,11 +312,12 @@ module processor(
                 PC <= 18;
               end
               BRANCH_INT2: begin
-                PC <= 27;
+                PC <= 28;
               end
               BRANCH_DECRYPTION: begin
                 if(regs[2] != 0) begin
-                  //$display("R2 tap: %x", regs[2]);
+              //    $display("R2 tap: %x", regs[2]);
+              //    $display("R9 mem: %d", regs[9]);
                   PC <= 50;
                 end
                 else begin
@@ -328,6 +341,15 @@ module processor(
               BRANCH_DECRYPTION2: begin
                 if(regs[0] != 41) begin
                   PC <= 65;
+                end
+                else begin
+                  PC <= PC + 1;
+                end
+              end
+
+              BRANCH_EDGE: begin
+                if(regs[14] == 8) begin
+                  PC <= 31;
                 end
                 else begin
                   PC <= PC + 1;
