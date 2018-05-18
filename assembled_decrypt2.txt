@@ -18,6 +18,7 @@
 0010_00101 // mov tap_addr
 1100_00000 // movreg tap_addr
 0000_01010 // lw r2, r2
+1000_11100 // inc r14
 1000_10010 // inc r9
 0111_00110 // b skip
 0100_10110 // and r5, r2
@@ -25,14 +26,13 @@
 0110_01010 // lsl r5
 0101_10110 // or r5, r2
 0111_00111 // b notequal
-1000_11100 // inc r14
 1100_00010 // movreg tap_addr_back
 1100_00011 // movreg backseed
 0111_01000 // b for
 1100_00101 // movreg newseed
 0111_00100 // b while
-1000_11100 // inc r14
 1100_00010 // movreg tap_addr_back
+0111_01111 // b edge
 0111_01001 // b int1
 1010_10010 // dec r9
 1010_10110 // dec r11
