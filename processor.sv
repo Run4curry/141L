@@ -62,6 +62,9 @@ module processor(
   const logic[4:0] BRANCH_DECRYPTION3 = 5'b01101; // compare r3 to space
   const logic[4:0] BRANCH_DECRYPTION2 = 5'b01110; // compare r0 to 41
   const logic[4:0] BRANCH_EDGE = 5'b01111; // compare r14 to 8
+  const logic[4:0] BRANCH_MAIN_LOOP = 5'b10000; // branch back to main loop
+  const logic[4:0] BRANCH_SECOND_SPACE = 5'b10001; // compare the value in r5 to space
+  const logic[4:0] BRANCH_END3 = 5'b10010; // compare the value in r5 to space
 
 
 
