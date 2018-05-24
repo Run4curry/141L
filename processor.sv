@@ -359,6 +359,28 @@ module processor(
                 end
               end
 
+              BRANCH_MAIN_LOOP: begin
+                PC <= 65;
+              end
+
+              BRANCH_SECOND_SPACE: begin
+                if(regs[5] == 8'h20) begin
+                  PC <= 81;
+                end
+                else begin
+                  PC <= PC + 1;
+                end
+              end
+
+              BRANCH_END3: begin
+                if(regs[5] == 8'h20) begin
+                  PC <= 99;
+                end
+                else begin
+                  PC <= PC + 1;
+                end
+              end
+
 
             endcase
 
