@@ -252,17 +252,25 @@ module top_tb ()            ;
       $display("%d bench msg: %h dut msg: %h",n, msg_crypto3[n], dut.dmem[n+64]);
 
     // run program 3
-    /*$readmemb("decoder-shifted.bin", dut.instr_rom.rom);
-    init = 1;                          // activate reset
+    $readmemb("assembled_decrypt3.txt", dut.imem);
     for(int n=64; n<128; n++)
-      dut.data_mem.DM[n] = msg_crypto4[n - 64];
+      dut.dmem[n] = msg_crypto4[n - 64];
+    dut.dmem[140] = 8'b11100001;
+    dut.dmem[141] = 8'b11010100;
+    dut.dmem[142] = 8'b11000110;
+    dut.dmem[143] = 8'b10111000;
+    dut.dmem[144] = 8'b10110100;
+    dut.dmem[145] = 8'b10110010;
+    dut.dmem[146] = 8'b11111010;
+    dut.dmem[147] = 8'b11110011;
     #20ns init = 0;
     #60ns;                             // wait for 6 clock cycles of nominal 10ns each
     wait(done);                        // wait for DUT's done flag to go high
-    #10ns $display();
+    init = 1;
+    //#10ns $display();
     $display("program 3:");
-    for(int n=0; n<55; n++)
-      $display("%d bench msg: %h dut msg: %h",n, str4[n+lk], dut.data_mem.DM[n]);*/
+    for(int n=0; n<31; n++)
+      $display("%d bench msg: %h dut msg: %h",n, str4[n+lk], dut.dmem[n]);
     #20ns $stop;
   end
 
