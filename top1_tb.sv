@@ -36,7 +36,7 @@ module top1_tb ()            ;
   string     str1  = "Mr. Watson, come here. I want to see you.";  // 1st program 1 input
   string     str2  = "Knowledge comes, but wisdom lingers.     ";  // program 2 output
   string     str3  = "  01234546789abcdefghijklmnopqrstuvwxyz. ";  // 2nd program 1 input
-  string     str4  = "  f       A joke is a very serious thing.";  // program 3 output
+  string     str4  = "    f     A joke is a very serious thing.";  // program 3 output
 
   // displayed encrypted string will go here:
   string     str_enc1[64];  // first program 1 output
@@ -92,7 +92,7 @@ module top1_tb ()            ;
     init = 1;  // activate reset
 
     // program 1 -- precompute encrypted message
-    lfsr_ptrn[0] = LFSR_ptrn[1];  // select one of 8 permitted
+    lfsr_ptrn[0] = LFSR_ptrn[4];  // select one of 8 permitted
     lfsr1[0]     = LFSR_init[0];  // any nonzero value (zero may be helpful for debug)
     $display("run program 1 for the first time");
     $display("%s",str1);          // print original message in transcript window
@@ -177,7 +177,7 @@ module top1_tb ()            ;
     $display("\n");
 
     // program 3 -- precompute encrypted message
-    lfsr_ptrn[3] = LFSR_ptrn[6];  // select one of 8 permitted
+    lfsr_ptrn[3] = LFSR_ptrn[4];  // select one of 8 permitted
     lfsr4[0]     = LFSR_init[3];  // any nonzero value (zero may be helpful for debug)
     $display("run program 3");
     $display("%s",str4)        ;  // print original message in transcript window
@@ -248,7 +248,7 @@ module top1_tb ()            ;
           n, msg_crypto1[n], msg_crypto1[n], dut.dmem[n+64]);
 
     // run program 2
-    $readmemb("assembled_decrypt2.txt", dut.imem);
+  //  $readmemb("assembled_decrypt2.txt", dut.imem);
 //    init = 1;                          // activate reset
 // ***** load operands into your data memory *****
 // ***** use your instance name for data memory and its internal core *****
@@ -272,7 +272,7 @@ module top1_tb ()            ;
           n, str2[n], str2[n], dut.dmem[n]);
 
     // run program 1
-    $readmemb("assembled_encrypt.txt", dut.imem);
+  //  $readmemb("assembled_encrypt.txt", dut.imem);
 //    init = 1;
 // ***** load operands into your data memory *****
 // ***** use your instance name for data memory and its internal core *****
@@ -302,7 +302,7 @@ module top1_tb ()            ;
 //    init = 1;                          // activate reset
 // ***** load operands into your data memory *****
 // ***** use your instance name for data memory and its internal core *****
-$readmemb("assembled_decrypt2.txt", dut.imem);
+//$readmemb("assembled_decrypt2.txt", dut.imem);
     for(int n=64; n<128; n++)
       dut.dmem[n] = msg_crypto4[n - 64];
     dut.dmem[140] = 8'b11100001;

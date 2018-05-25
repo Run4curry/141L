@@ -8,9 +8,10 @@ module processor(
     logic[7:0] regs[16]; // regfile
     logic[7:0] PC; // program counter
     logic[8:0] instr; // the actual instruction
+    logic[8:0] counter = 1; // to keep track of which program we on
 
     // enum/constant declarations
-    enum logic[1:0] {IDLE=2'b00, COMPUTE=2'b01, DUMMY=2'b10} state;
+    enum logic[1:0] {IDLE=2'b00, COMPUTE=2'b01, DUMMY=2'b10, DUMMY2=2'b11} state;
     const logic[3:0] LW = 4'b0000; // load word check
     const logic[3:0] SW = 4'b0001; // store word check
     const logic[3:0] MOV = 4'b0010; // Move instruction
@@ -106,12 +107,18 @@ module processor(
     // Computer is basically an FSM so make it an FSM!!!!!
     always_ff @(posedge clk) begin
       if(init) begin
-        PC <= 8'b00000000;
-        done <= 0;
+        if(counter == 1) begin
+          PC <= 8'b00000000;
+          done <= 0;
         //$display("%d",done);
         //$display("Hello\n");
       //  $display("%x", init);
-        state <= IDLE;
+          state <= IDLE;
+        end
+        else begin
+          done <= 0;
+          state <= DUMMY;
+        end
       end
       else
         case(state)
@@ -123,6 +130,7 @@ module processor(
                 regs[i] <= 8'b00000000;
               end
             //  $display("%b", imem[50]);
+              counter <= 1;
               state <= COMPUTE;
             end
 
@@ -273,11 +281,11 @@ module processor(
 
               end
               BRANCH_WHILE: begin
-                PC <= 7;
+                PC <= 61; // 7
               end
               BRANCH_NEXT: begin
                 if(regs[11] == 1) begin
-                  PC <= 44;
+                  PC <= 98; // 44
               //    $display("BRANCHED!!");
                 end
                 else begin
@@ -287,7 +295,7 @@ module processor(
 
               BRANCH_SKIP: begin
                 if(regs[2] == 0) begin
-                  PC <= 33;
+                  PC <= 87; // 33
                 end
                 else begin
                   PC <= PC + 1;
@@ -297,7 +305,7 @@ module processor(
 
               BRANCH_NOTEQUAL: begin
                 if(regs[5] != regs[3]) begin
-                  PC <= 36;
+                  PC <= 90; // 36
                 end
                 else begin
                   PC <= PC + 1;
@@ -305,23 +313,23 @@ module processor(
               end
               BRANCH_FOR: begin
                 if(regs[14] < 8) begin
-                  PC <= 18;
+                  PC <= 72; // 18
                 end
                 else begin
                   PC <= PC + 1;
                 end
               end
               BRANCH_INT1: begin
-                PC <= 18;
+                PC <= 72; // 18
               end
               BRANCH_INT2: begin
-                PC <= 28;
+                PC <= 82; // 28
               end
               BRANCH_DECRYPTION: begin
                 if(regs[2] != 0) begin
               //    $display("R2 tap: %x", regs[2]);
               //    $display("R9 mem: %d", regs[9]);
-                  PC <= 50;
+                  PC <= 104; // 50
                 end
                 else begin
                   PC <= PC + 1;
@@ -329,12 +337,12 @@ module processor(
               end
 
               BRANCH_NEXT2: begin
-                PC <= 44;
+                PC <= 98; // 44
               end
 
               BRANCH_DECRYPTION3: begin
                 if(regs[3] == 8'h20) begin
-                  PC <= 50;
+                  PC <= 104; // 50
                 end
                 else begin
                   PC <= PC + 1;
@@ -343,7 +351,7 @@ module processor(
 
               BRANCH_DECRYPTION2: begin
                 if(regs[0] != 41) begin
-                  PC <= 65;
+                  PC <= 119; // 65
                 end
                 else begin
                   PC <= PC + 1;
@@ -352,7 +360,7 @@ module processor(
 
               BRANCH_EDGE: begin
                 if(regs[14] == 8) begin
-                  PC <= 31;
+                  PC <= 84; // 31
                 end
                 else begin
                   PC <= PC + 1;
@@ -387,8 +395,22 @@ module processor(
             state <= COMPUTE;
             end
             STOP: begin // STOP instruction
-              PC <= 8'b00000000;
-              state <= DUMMY;
+            if(counter == 1) begin
+              PC <= 54;
+              //$display("%d", PC);
+              //$display("Hi");
+              counter <= counter + 1;
+            end
+            else if(counter == 2) begin
+              PC <= 0;
+              counter <= counter + 1;
+            end
+            else begin
+              PC <= 54;
+              counter <= counter + 1;
+            end
+
+              state <= DUMMY2;
               done <= 1;
             //  $display("done");
             end
@@ -400,11 +422,22 @@ module processor(
           endcase //endcase
 
           end
+          DUMMY2: begin
+            state <= DUMMY;
+            done <= 0;
+          end
           DUMMY: begin // just to ensure that reset gets set to 1 on the testbench's side
           // will need to tweak this later probably
         //    $display("%d", done);
-            done <= 0;
-            state <= IDLE;
+            if(!init) begin
+              for(int i = 0; i < 16; i++) begin
+                regs[i] <= 8'b00000000;
+              end
+              state <= COMPUTE;
+            end
+            else begin
+              state <= DUMMY;
+            end
 
           end
 

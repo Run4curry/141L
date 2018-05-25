@@ -52,3 +52,84 @@
 1100_00010 // movreg tap_addr_back
 0111_00011 // b morepadding
 1011_00000 // stop
+0010_00001 // mov enc64
+0010_00100 // mov 8taps
+0010_00011 // mov zero
+0010_01000 // mov space
+0000_01001 // lw r2, r1
+1000_00010 // inc r1
+0011_11110 // xor r7, r2
+0010_00101 // mov tap_addr
+0111_00101 // b next
+1100_00001 // movreg seed
+0010_01000 // mov space
+0010_00110 // mov counttaps
+0000_01001 // lw r2, r1
+1000_00010 // inc r1
+0011_11110 // xor r7, r2
+1100_00100 // movreg seed2
+1100_00011 // movreg backseed
+0010_00101 // mov tap_addr
+1100_00000 // movreg tap_addr
+0000_01010 // lw r2, r2
+1000_11100 // inc r14
+1000_10010 // inc r9
+0111_00110 // b skip
+0100_10110 // and r5, r2
+1001_10100 // par r10
+0110_01010 // lsl r5
+0101_10110 // or r5, r2
+0111_00111 // b notequal
+1100_00010 // movreg tap_addr_back
+1100_00011 // movreg backseed
+0111_01000 // b for
+1100_00101 // movreg newseed
+0111_00100 // b while
+1100_00010 // movreg tap_addr_back
+0111_01111 // b edge
+0111_01001 // b int1
+1010_10010 // dec r9
+1010_10110 // dec r11
+1100_00010 // movreg tap_addr_back
+0010_00111 // mov tap_zero
+0001_11110 // sw r7, r2
+1100_00000 // movreg tap_addr
+1000_10010 // inc r9
+0111_01010 // b int2
+1100_00000 // movreg tap_addr
+0000_01010 // lw r2, r2
+1000_10010 // inc r9
+0111_01011 // b decryption
+1100_00010 // movreg tap_addr_back
+0111_01100 // b next2
+1100_00000 // movreg tap_addr
+0100_10110 // and r5, r2
+1001_10100 // par r10
+0110_01010 // lsl r5
+0101_10110 // or r5, r2
+0000_01001 // lw r2, r1
+1000_00010 // inc r1
+1100_00001 // movreg seed
+0011_10110 // xor r5, r2
+1100_00100 // movreg seed2
+1100_00011 // movreg backseed
+1100_00010 // movreg tap_addr_back
+0111_01101 // b decryption3
+0001_01100 // sw r3, r0
+1000_00000 // inc r0
+1100_00000 // movreg tap_addr
+0100_10110 // and r5, r2
+1001_10100 // par r10
+0110_01010 // lsl r5
+0101_10110 // or r5, r2
+0000_01001 // lw r2, r1
+1000_00010 // inc r1
+1100_00001 // movreg seed
+0011_10110 // xor r5, r2
+1100_00100 // movreg seed2
+1100_00011 // movreg backseed
+1100_00010 // movreg tap_addr_back
+0001_01100 // sw r3, r0
+1000_00000 // inc r0
+0111_01110 // b decryption2
+1011_00000 // stop
